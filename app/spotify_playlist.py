@@ -1,10 +1,12 @@
+import glob
+import os
 import csv
 import json
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 
 # Accessing credentials
-with open(r"credentials.json") as file:
+with open(r"assets\credentials.json") as file:
     data = json.load(file)
     spotify_client_id, spotify_client_secret = data["Spotify"].values()
     file.close()
@@ -45,8 +47,15 @@ scraped_data = list(
     zip(range(1, total_tracks + 1), track_list, artist_list, album_list)
 )
 
+# Deleting old csv files
+path = os.getcwd() + "\\utils"
+csv_files = glob.glob(os.path.join(path, "*.csv"))
+if len(csv_files) > 1:
+    for file_path in csv_files:
+        os.remove(file_path)
+
 # Storing data in csv file
-with open(f"{playlist_name}.csv", "w", newline="") as data:
+with open(f"{path}\\{playlist_name}.csv", "w", newline="", encoding="utf-8") as data:
     writer = csv.writer(data)
     writer.writerow(header)
     writer.writerows(scraped_data)
