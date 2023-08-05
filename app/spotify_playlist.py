@@ -17,8 +17,11 @@ sp = Spotify(auth_manager=auth)
 
 # Playlist link
 # playlist_link = input("Enter playlist link : ")
+# playlist_link = (
+#     "https://open.spotify.com/playlist/29CDHardEjqjwFkaTIXH5d?si=7a69a467e839450e"
+# )
 playlist_link = (
-    "https://open.spotify.com/playlist/29CDHardEjqjwFkaTIXH5d?si=7a69a467e839450e"
+    r"https://open.spotify.com/playlist/104xyMQrIE7qBKYWxo3G6Z?si=f83497997d544c3f"
 )
 playlist_data = sp.playlist(playlist_link)
 
@@ -49,8 +52,7 @@ scraped_data = list(
 
 # Deleting old csv files
 path = os.getcwd() + "\\utils"
-csv_files = glob.glob(os.path.join(path, "*.csv"))
-if len(csv_files) > 1:
+if csv_files := glob.glob(os.path.join(path, "*.csv")):
     for file_path in csv_files:
         os.remove(file_path)
 
