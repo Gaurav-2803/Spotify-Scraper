@@ -60,7 +60,7 @@ for i in range(total_tracks):
 query_list = set(
     filter(
         lambda x: x.strip() not in [None, ""],
-        list(map(lambda x: " ".join(x), track_artist_list)),
+        list(map(" ".join, track_artist_list)),
     )
 )
 
@@ -70,11 +70,11 @@ print(f"Downloading your favorites songs at: {path_to_download_folder}")
 
 # Fetching Links and downloading files
 for query in query_list:
-    # Fecthing Links
-    """Using Pytube"""
+    # Fetching Links
+    # Using Pytube
     s = pytube.Search(query)
-    video_id = s.results[0].video_id
-    """ Using Youtube Data API """
+    track_id = s.results[0].video_id
+    # Using Youtube Data API
     # request = yt.search().list(
     #     part="snippet",
     #     q=query,
@@ -84,8 +84,8 @@ for query in query_list:
     # )
     # response = request.execute()
     # yt_items = response["items"][0]
-    # video_id = yt_items["id"]["videoId"]
-    link = f"https://www.youtube.com/watch?v={video_id}"
+    # track_id = yt_items["id"]["videoId"]
+    link = f"https://www.youtube.com/watch?v={track_id}"
 
     # Downloading tracks
     link_data = pytube.YouTube(link)
