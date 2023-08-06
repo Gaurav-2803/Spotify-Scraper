@@ -1,17 +1,19 @@
+# Libraries
 import os
 import json
 import pytube
+import webbrowser
 from pathlib import Path
 from spotipy import Spotify
-from googleapiclient.discovery import build
 from spotipy.oauth2 import SpotifyClientCredentials
+from googleapiclient.discovery import build
 
 # Youtube Data Api info
 service_name = "youtube"
 api_version = "v3"
 
 # Accessing credentials for Spotify and Youtube
-with open(r"..\assets\credentials.json") as file:
+with open(r"assets\credentials.json") as file:
     data = json.load(file)
     spotify_client_id, spotify_client_secret = data["Spotify"].values()
     developer_key = data["Youtube"]["developer_key"]
@@ -40,8 +42,6 @@ total_tracks = playlist_data["tracks"]["total"]
 tracks = playlist_data["tracks"]
 spotify_items = tracks["items"]
 
-track_list = []
-artist_list = []
 track_artist_list = []
 offset = 0
 for i in range(total_tracks):
@@ -67,6 +67,7 @@ query_list = set(
 # Download path
 path_to_download_folder = os.path.join(Path.home(), "Downloads") + "\\" + playlist_name
 print(f"Downloading your favorites songs at: {path_to_download_folder}")
+
 # Fetching Links and downloading files
 for query in query_list:
     # Fecthing Links
@@ -93,4 +94,4 @@ for query in query_list:
     print(f"Downloaded -> {query}")
 
 print("Opening your folder ...")
-os.startfile(path_to_download_folder)
+webbrowser.open(path_to_download_folder)
