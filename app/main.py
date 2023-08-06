@@ -1,6 +1,7 @@
 import os
 
 if __name__ == "__main__":
+    os.system("python app\\spotify_playlist.py")
     print("Fetching tracks from playlist")
     os.system("python app\\spotify_playlist.py")
     print("Dowloading tracks")

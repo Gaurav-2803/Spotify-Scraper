@@ -2,6 +2,7 @@ import glob
 import os
 import csv
 import json
+import py_script
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -20,9 +21,11 @@ sp = Spotify(auth_manager=auth)
 # playlist_link = (
 #     "https://open.spotify.com/playlist/29CDHardEjqjwFkaTIXH5d?si=7a69a467e839450e"
 # )
-playlist_link = (
-    r"https://open.spotify.com/playlist/104xyMQrIE7qBKYWxo3G6Z?si=f83497997d544c3f"
-)
+# playlist_link = (
+#     r"https://open.spotify.com/playlist/104xyMQrIE7qBKYWxo3G6Z?si=f83497997d544c3f"
+# )
+# playlist_link=r"https://open.spotify.com/playlist/3ua7cas0riaebaixijDaoq?si=6c6aafd7d2704ae9"
+playlist_link = py_script.main()
 playlist_data = sp.playlist(playlist_link)
 
 # Data scraping
