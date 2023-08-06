@@ -1,11 +1,9 @@
-# Spotify-Scraper
+# A spotify_scraper Flet app
 
-Upcoming changes
-Oops
-Reduce time
-Estimated Time
-User input
-Logs
-Flask
-better audio quality
-Video and audio download option
+An example of a minimal Flet app.
+
+To run the app:
+
+```
+flet run [app_directory]
+```
