@@ -1,7 +1,6 @@
 # Libraries
 import os
 import re
-import eyed3
 import pytube
 import webbrowser
 from pathlib import Path
@@ -9,6 +8,9 @@ from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
+
+# import eyed3
+# from moviepy.editor import *
 
 # Connecting with spotify api
 load_dotenv()
@@ -27,12 +29,6 @@ yt = build(
 
 # Playlist link
 playlist_link = input("Enter Playlist link : ")
-# playlist_link = (
-#     "https://open.spotify.com/playlist/3ua7cas0riaebaixijDaoq?si=1dedb4f6e6e04ff4"
-# )
-# playlist_link = (
-#     "https://open.spotify.com/playlist/48R8WFVbjl8rO1iFfr9Hxs?si=a27673c96bb14ed1"
-# )
 playlist_data = sp.playlist(playlist_link)
 
 # Storing data
@@ -103,11 +99,20 @@ for i, query in enumerate(query_list):
 
         # Downloading tracks
         link_data = pytube.YouTube(link)
-        audio = link_data.streams.filter(only_audio=True).last()
+        video_file = link_data.streams.filter(only_audio=True).first()
         track_name = " by ".join(track_artist_list[i])
         clean_track_name = re.sub(r'["\/:?<>|]', "", track_name)
-        audio.download(path_to_download_folder, f"{clean_track_name}.mp3", timeout=15)
-        print(f"{track_no}] Downloaded -> {clean_track_name}")
+        video_file.download(
+            path_to_download_folder, f"{clean_track_name}.mp3", timeout=15
+        )
+
+        # # Extract audio from video
+        # audio_file = VideoFileClip(
+        #     f"{path_to_download_folder}\{clean_track_name}.mp4", fps_source="fps"
+        # )
+        # audio_file.audio.write_audiofile(
+        #     f"{path_to_download_folder}{clean_track_name}.mp3"
+        # )
 
         # Meta data update
         # track = eyed3.load("song.mp3")
@@ -117,8 +122,10 @@ for i, query in enumerate(query_list):
         # track.tag.album_artist = "Various Artists"
         # track.tag.title = "The Edge"
 
+        print(f"{track_no}] Downloaded -> {clean_track_name}")
         total_downloaded_tracks += 1
         track_no += 1
+
     except Exception as error_log:
         total_failed_tracks += 1
         print(f"Failed -> {clean_track_name}")
