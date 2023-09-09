@@ -9,36 +9,41 @@ def main(page: Page):
 
     def send_info(a):
         link, path = playlist_link.value, folder_path.value
-        download_playlist.__start(link, path)
+        download_playlist.__start(
+            page,
+            link,
+            path,
+        )
 
     page.title = "Spotify Scraper"
     page.horizontal_alignment = CrossAxisAlignment.CENTER
     page.vertical_alignment = MainAxisAlignment.CENTER
     page.bgcolor = "#0B0B0D"
-    # page.theme = Theme(color_scheme=ColorScheme(secondary="#D3D5FD"))
     heading = Text(
         value="Spotify Scraper",
-        size=60,
-        height=90,
+        style=TextThemeStyle.DISPLAY_LARGE,
         color="#D3D5FD",
     )
     playlist_link = TextField(
+        label="Playlist Link",
         hint_text="Playlist Link",
         width=500,
+        color="#D3D5FD",
         bgcolor="#474A56",
         border_width=2,
         border_color="#929AAB",
-        color="#D3D5FD",
         autofocus=True,
     )
     folder_path = TextField(
+        label="Folder Path",
         hint_text="Folder Path = Downloads",
         width=500,
+        color="#D3D5FD",
         bgcolor="#474A56",
         border_width=2,
         border_color="#929AAB",
-        color="#D3D5FD",
         disabled=True,
+        helper_text="Default location is Download folder",
     )
     path_change_chk = Checkbox(
         label="Change Download Location?",
@@ -48,8 +53,6 @@ def main(page: Page):
     )
     download_btn = ElevatedButton(
         text="Download",
-        height=30,
-        width=115,
         on_click=send_info,
         style=ButtonStyle(shape=RoundedRectangleBorder(radius=3)),
     )
@@ -58,24 +61,20 @@ def main(page: Page):
             [
                 heading,
             ],
-            height=100,
-            alignment=CrossAxisAlignment.CENTER,
         ),
         Column(
             [
                 playlist_link,
                 folder_path,
             ],
-            spacing=15,
-            alignment=CrossAxisAlignment.CENTER,
+            spacing=MainAxisAlignment.SPACE_BETWEEN,
         ),
         Row(
             [
                 path_change_chk,
                 download_btn,
             ],
-            height=40,
-            spacing=50,
+            spacing=MainAxisAlignment.SPACE_BETWEEN,
             alignment=MainAxisAlignment.CENTER,
         ),
     )

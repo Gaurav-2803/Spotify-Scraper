@@ -9,6 +9,7 @@ from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from flet import *
 
 
 # import eyed3
@@ -37,7 +38,8 @@ class playlist:
     download_path: str = ""
     query_list: list[str] = None
 
-    def __init__(self, url: str, path: str = ""):
+    def __init__(self, page, url: str, path: str = ""):
+        self.page = page
         self.playlist_url = url
         if path != "":
             self.download_path = path
@@ -62,6 +64,14 @@ class playlist:
     def extract_playlist_data(self):
         self.playlist_data = playlist.__sp_obj.playlist(self.playlist_url)
         self.playlist_name = self.playlist_data["name"]
+        # self.page.add(
+        #     # Container(
+        #     Text(value=f"Fetching info from your playlist: {self.playlist_name}"),
+        #     # bgcolor=colors.WHITE,
+        #     # )
+        # )
+        # self.page.scroll = "always"
+        # self.page.update()
         print(f"Fetching info from your playlist: {self.playlist_name}")
         self.total_tracks = self.playlist_data["tracks"]["total"]
         self.tracks = self.playlist_data["tracks"]
@@ -177,8 +187,12 @@ class playlist:
         webbrowser.open(self.download_path)
 
 
-def __start(link, path=""):
-    pd = playlist(link, path)
+def __start(
+    page,
+    link,
+    path="",
+):
+    pd = playlist(page, link, path)
     pd.spotify_auth()
     pd.youtube_auth()
     pd.extract_playlist_data()
