@@ -1,8 +1,5 @@
 from flet import *
-
-
-def spotify_download(link, path):
-    pass
+import download_playlist
 
 
 def main(page: Page):
@@ -12,7 +9,7 @@ def main(page: Page):
 
     def send_info(a):
         link, path = playlist_link.value, folder_path.value
-        spotify_download(link, path)
+        download_playlist.__start(link, path)
 
     page.title = "Spotify Scraper"
     page.horizontal_alignment = CrossAxisAlignment.CENTER
@@ -54,6 +51,7 @@ def main(page: Page):
         height=30,
         width=115,
         on_click=send_info,
+        style=ButtonStyle(shape=RoundedRectangleBorder(radius=3)),
     )
     page.add(
         Column(
