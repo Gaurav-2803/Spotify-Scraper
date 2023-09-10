@@ -4,7 +4,8 @@ import download_playlist
 
 def main(page: Page):
     def change_path_status(a):
-        folder_path.disabled = folder_path.disabled == False
+        folder_path.visible = path_change_chk.value != False
+        # output.controls.append(Text("Hello"))
         page.update()
 
     def send_info(a):
@@ -15,35 +16,27 @@ def main(page: Page):
             path,
         )
 
-    page.title = "Spotify Scraper"
-    page.horizontal_alignment = CrossAxisAlignment.CENTER
-    page.vertical_alignment = MainAxisAlignment.CENTER
-    page.bgcolor = "#0B0B0D"
     heading = Text(
         value="Spotify Scraper",
-        style=TextThemeStyle.DISPLAY_LARGE,
+        style=TextThemeStyle.DISPLAY_MEDIUM,
         color="#D3D5FD",
+        weight="w800",
     )
     playlist_link = TextField(
-        label="Playlist Link",
         hint_text="Playlist Link",
-        width=500,
+        autofocus=True,
         color="#D3D5FD",
         bgcolor="#474A56",
         border_width=2,
         border_color="#929AAB",
-        autofocus=True,
     )
     folder_path = TextField(
-        label="Folder Path",
         hint_text="Folder Path = Downloads",
-        width=500,
+        visible=False,
         color="#D3D5FD",
         bgcolor="#474A56",
         border_width=2,
         border_color="#929AAB",
-        disabled=True,
-        helper_text="Default location is Download folder",
     )
     path_change_chk = Checkbox(
         label="Change Download Location?",
@@ -53,30 +46,54 @@ def main(page: Page):
     )
     download_btn = ElevatedButton(
         text="Download",
+        icon="download",
         on_click=send_info,
-        style=ButtonStyle(shape=RoundedRectangleBorder(radius=3)),
+        style=ButtonStyle(shape=RoundedRectangleBorder(radius=2)),
     )
-    page.add(
-        Column(
-            [
-                heading,
-            ],
-        ),
-        Column(
-            [
-                playlist_link,
-                folder_path,
-            ],
-            spacing=MainAxisAlignment.SPACE_BETWEEN,
-        ),
-        Row(
-            [
-                path_change_chk,
-                download_btn,
-            ],
-            alignment=MainAxisAlignment.CENTER,
-        ),
+    output = Column(
+        controls=[
+            Text(
+                value="Logs",
+                style=TextThemeStyle.TITLE_LARGE,
+                color="#D3D5FD",
+                weight="w800",
+            ),
+            Divider(height=10, color="transparent"),
+        ],
     )
+    content = Column(
+        width=600,
+        controls=[
+            Row(
+                controls=[
+                    heading,
+                ],
+                alignment=MainAxisAlignment.CENTER,
+            ),
+            Divider(height=25, color="transparent"),
+            Column(
+                controls=[
+                    playlist_link,
+                    folder_path,
+                ],
+            ),
+            Divider(height=5, color="transparent"),
+            Row(
+                controls=[
+                    path_change_chk,
+                    download_btn,
+                ],
+                alignment=MainAxisAlignment.SPACE_EVENLY,
+            ),
+            Divider(height=5, color="white"),
+            output,
+        ],
+    )
+    page.bgcolor = "#0B0B0D"
+    page.title = "Spotify Scraper"
+    page.horizontal_alignment = CrossAxisAlignment.CENTER
+    page.add(content)
+    page.scroll = "always"
 
 
 app(target=main, view=AppView.WEB_BROWSER, port=45000)

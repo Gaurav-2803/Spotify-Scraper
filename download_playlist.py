@@ -72,9 +72,7 @@ class playlist:
                 value=f"Fetching info from your playlist: {self.playlist_name}",
             ),
         )
-        self.page.scroll = "always"
         self.page.update()
-        print(f"Fetching info from your playlist: {self.playlist_name}")
         self.total_tracks = self.playlist_data["tracks"]["total"]
         self.tracks = self.playlist_data["tracks"]
         self.spotify_items = self.tracks["items"]
@@ -104,9 +102,12 @@ class playlist:
 
         self.total_not_found_tracks = self.total_tracks - len(self.track_artist_list)
         self.total_found_tracks = len(self.track_artist_list)
-        print(
-            f"Playlist Name: {self.playlist_name} \nTotal Tracks: {self.total_tracks}\nFound: {self.total_found_tracks}\nNot Found: {self.total_not_found_tracks}"
+        self.page.add(
+            Text(
+                f"Playlist Name: {self.playlist_name} \nTotal Tracks: {self.total_tracks}\nFound: {self.total_found_tracks}\nNot Found: {self.total_not_found_tracks}"
+            )
         )
+        self.page.update()
 
     # Queries to be searched
     def search_queries(self):
@@ -130,7 +131,8 @@ class playlist:
         elif current_os == "iOS":
             pass
         else:
-            print("Unsupported operating system.")
+            self.page.add(Text("Unsupported operating system."))
+            self.page.update()
 
     # Fetching Links
     @staticmethod
@@ -168,7 +170,10 @@ class playlist:
     # Download songs
     def start_download(self):
         # Fetching Links and downloading files
-        print(f"Downloading your favorites songs at: {self.download_path}")
+        self.page.add(
+            Text(f"Downloading your favorites songs at: {self.download_path}")
+        )
+        self.page.update()
         for track_no, query in enumerate(self.query_list):
             try:
                 # Fetch link
@@ -182,22 +187,28 @@ class playlist:
                     self.download_path, f"{clean_track_name}.mp3", timeout=15
                 )
 
-                print(
-                    f"Downloaded ({self.total_downloaded_tracks+1}/{self.total_found_tracks}) -> {clean_track_name}"
+                self.page.add(
+                    Text(
+                        f"Downloaded ({self.total_downloaded_tracks+1}/{self.total_found_tracks}) -> {clean_track_name}"
+                    )
                 )
                 self.total_downloaded_tracks += 1
 
             except Exception as error_log:
                 self.total_failed_tracks += 1
-                print(f"Failed -> {clean_track_name}")
+                self.page.add(Text(f"Failed -> {clean_track_name}"))
+                self.page.update()
                 print(error_log)
 
     # Open output folder
     def open_folder(self):
-        print(
-            f"Total Downloaded Tracks: {self.total_downloaded_tracks}\nTotal Failed Tracks: {self.total_failed_tracks}"
+        self.page.add(
+            Text(
+                f"Total Downloaded Tracks: {self.total_downloaded_tracks}\nTotal Failed Tracks: {self.total_failed_tracks}"
+            )
         )
-        print(f"Opening your folder {self.playlist_name}")
+        self.page.add(Text(f"Opening your folder {self.playlist_name}"))
+        self.page.update()
 
         webbrowser.open(self.download_path)
 
