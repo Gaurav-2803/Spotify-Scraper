@@ -2,6 +2,7 @@
 import os
 import re
 import pytube
+import platform
 import webbrowser
 from pathlib import Path
 from dotenv import load_dotenv
@@ -45,16 +46,18 @@ class playlist:
             self.download_path = path
 
     # Connecting with spotify api
-    def spotify_auth(self):
+    @classmethod
+    def spotify_auth(cls):
         auth = SpotifyClientCredentials(
             os.getenv("sp_client_id"),
             os.getenv("sp_client_secret"),
         )
-        playlist.__sp_obj = Spotify(auth_manager=auth)
+        cls.__sp_obj = Spotify(auth_manager=auth)
 
     # Connecting with youtube api
-    def youtube_auth(self):
-        playlist.__yt_obj = build(
+    @classmethod
+    def youtube_auth(cls):
+        cls.__yt_obj = build(
             os.getenv("yt_service_name"),
             os.getenv("yt_api_version"),
             developerKey=os.getenv("yt_developer_key"),
@@ -64,14 +67,13 @@ class playlist:
     def extract_playlist_data(self):
         self.playlist_data = playlist.__sp_obj.playlist(self.playlist_url)
         self.playlist_name = self.playlist_data["name"]
-        # self.page.add(
-        #     # Container(
-        #     Text(value=f"Fetching info from your playlist: {self.playlist_name}"),
-        #     # bgcolor=colors.WHITE,
-        #     # )
-        # )
-        # self.page.scroll = "always"
-        # self.page.update()
+        self.page.add(
+            Text(
+                value=f"Fetching info from your playlist: {self.playlist_name}",
+            ),
+        )
+        self.page.scroll = "always"
+        self.page.update()
         print(f"Fetching info from your playlist: {self.playlist_name}")
         self.total_tracks = self.playlist_data["tracks"]["total"]
         self.tracks = self.playlist_data["tracks"]
@@ -112,14 +114,27 @@ class playlist:
 
     # Set download path
     def set_path(self):
-        self.download_path += (
-            os.path.join(Path.home(), "Downloads") + "\\" + self.playlist_name
-            if self.download_path == ""
-            else "\\" + self.playlist_name
-        )
+        current_os = platform.system()
+        if current_os == "Windows":
+            self.download_path += (
+                os.path.join(Path.home(), "Downloads") + "\\" + self.playlist_name
+                if self.download_path == ""
+                else "\\" + self.playlist_name
+            )
+        elif current_os == "Darwin":
+            pass
+        elif current_os == "Linux":
+            pass
+        elif current_os == "Android":
+            pass
+        elif current_os == "iOS":
+            pass
+        else:
+            print("Unsupported operating system.")
 
     # Fetching Links
-    def fetch_link(self, query: str) -> str:
+    @staticmethod
+    def fetch_link(query: str) -> str:
         try:
             # Using Youtube Data API
             request = playlist.__yt_obj.search().list(

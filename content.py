@@ -74,7 +74,6 @@ def main(page: Page):
                 path_change_chk,
                 download_btn,
             ],
-            spacing=MainAxisAlignment.SPACE_BETWEEN,
             alignment=MainAxisAlignment.CENTER,
         ),
     )
