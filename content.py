@@ -1,16 +1,15 @@
 from flet import *
-import download_playlist
+import main
 
 
 def main(page: Page):
     def change_path_status(a):
-        folder_path.visible = path_change_chk.value != False
-        # output.controls.append(Text("Hello"))
+        folder_path.visible = path_change_chk.value is not False
         page.update()
 
-    def send_info(a):
+    def send_info(_):
         link, path = playlist_link.value, folder_path.value
-        download_playlist.__start(
+        main.__start(
             page,
             link,
             path,
@@ -70,7 +69,7 @@ def main(page: Page):
                 ],
                 alignment=MainAxisAlignment.CENTER,
             ),
-            Divider(height=25, color="transparent"),
+            Divider(height=5, color="transparent"),
             Column(
                 controls=[
                     playlist_link,
