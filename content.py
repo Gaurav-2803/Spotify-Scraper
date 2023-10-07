@@ -1,5 +1,5 @@
 from flet import *
-import main
+import script
 
 
 def main(page: Page):
@@ -9,7 +9,7 @@ def main(page: Page):
 
     def send_info(_):
         link, path = playlist_link.value, folder_path.value
-        main.__start(
+        script.__start(
             page,
             link,
             path,

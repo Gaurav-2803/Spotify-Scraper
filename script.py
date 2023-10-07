@@ -1,3 +1,11 @@
+""" 
+Bugs/Issues : 
+    Logic: 
+        1. Downloading more than once not updating logs and downloading them x times 
+    UI: 
+        1. Logs showing after completing whole process
+
+"""
 # Libraries
 import os
 import re
@@ -208,7 +216,6 @@ class playlist:
         )
         self.page.add(self.output_logs)
         self.page.update()
-
         webbrowser.open(self.download_path)
 
 

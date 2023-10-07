@@ -3,6 +3,7 @@ anyio==3.7.1
 cachetools==5.3.1
 certifi==2023.7.22
 charset-normalizer==3.2.0
+click==8.1.7
 colorama==0.4.6
 copier==8.3.0
 coverage==5.5
@@ -13,6 +14,7 @@ eyed3==0.9.7
 filetype==1.2.0
 flet==0.10.1
 flet-core==0.10.1
+flet-material==0.3.3
 flet-runtime==0.10.1
 funcy==2.0
 google-api-core==2.11.1
