@@ -8,7 +8,6 @@ Bugs/Issues :
 """
 # Libraries
 import os
-from pprint import pprint
 import re
 import pytube
 import platform
@@ -161,6 +160,7 @@ class scrape_spotify:
     # Set download path
     def set_path(self):
         current_os = platform.system()
+        print(current_os)
         if current_os == "Windows":
             self.download_path += (
                 os.path.join(Path.home(), "Downloads") + "\\" + self.entity_name
@@ -170,7 +170,11 @@ class scrape_spotify:
         elif current_os == "Darwin":
             pass
         elif current_os == "Linux":
-            pass
+            self.download_path += (
+                os.path.join(Path.home(), "Downloads") + "/" + self.entity_name
+                if self.download_path == ""
+                else "/" + self.entity_name
+            )
         elif current_os == "Android":
             pass
         elif current_os == "iOS":
