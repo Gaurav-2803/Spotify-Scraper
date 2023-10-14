@@ -23,11 +23,14 @@ from flet import *
 
 # import eyed3
 # from moviepy.editor import *
-class playlist:
+class scrape_spotify:
     load_dotenv()
     # Api Objects
     __sp_obj = None
     __yt_obj = None
+
+    # Link Data
+    link_type = ""
 
     # PLaylist Info
     playlist_data: dict = None
@@ -50,7 +53,7 @@ class playlist:
 
     def __init__(self, page, url: str, path: str = ""):
         self.page = page
-        self.playlist_url = url
+        self.url = url
         if path != "":
             self.download_path = path
 
@@ -72,9 +75,21 @@ class playlist:
             developerKey=os.getenv("yt_developer_key"),
         )
 
+    # Link Type
+    def link_type(self):
+        self.link_type = re.search(
+            r"^https:\/\/open\.spotify\.com\/(playlist|album|track)\/.*$", self.url
+        )[1]
+        if self.link_type == "playlist":
+            self.extract_playlist_data()
+        elif self.link_type == "album":
+            self.extract_album_data()
+        elif self.link_type == "track":
+            self.extract_track_data()
+
     # Playlist Data
     def extract_playlist_data(self):
-        self.playlist_data = playlist.__sp_obj.playlist(self.playlist_url)
+        self.playlist_data = scrape_spotify.__sp_obj.playlist(self.url)
         self.playlist_name = self.playlist_data["name"]
         self.output_logs.controls.append(
             Text(
@@ -84,6 +99,12 @@ class playlist:
         self.total_tracks = self.playlist_data["tracks"]["total"]
         self.tracks = self.playlist_data["tracks"]
         self.spotify_items = self.tracks["items"]
+
+    def extract_album_data(self):
+        pass
+
+    def extract_track_data(self):
+        pass
 
     # Make list of Track and Artist
     def song_artist_data(self):
@@ -96,7 +117,7 @@ class playlist:
                 ]
             )
             if (i + 1) % 100 == 0:
-                self.tracks = playlist.__sp_obj.next(self.tracks)
+                self.tracks = scrape_spotify.__sp_obj.next(self.tracks)
                 self.spotify_items = self.tracks["items"]
                 offset = i + 1
 
@@ -145,7 +166,7 @@ class playlist:
     def fetch_link(query: str) -> str:
         try:
             # Using Youtube Data API
-            request = playlist.__yt_obj.search().list(
+            request = scrape_spotify.__yt_obj.search().list(
                 part="snippet",
                 q=query,
                 maxResults=1,
@@ -219,18 +240,21 @@ class playlist:
         webbrowser.open(self.download_path)
 
 
+# https://open.spotify.com/playlist/5PGWUyfX68E4Mzzmxm59rG?si=05889ad869bb4ead
+# https://open.spotify.com/album/01GR4NL5O5CZM51k0aejKD?si=WJf2YbQ0QWmYyV3Gysx7Mw
+# https://open.spotify.com/track/0g8Dq6OpSmWengqtLrVr77?si=6a06945a467a43fb
 def __start(
     page,
     link,
     path="",
 ):
-    pd = playlist(page, link, path)
-    pd.spotify_auth()
-    pd.youtube_auth()
-    pd.extract_playlist_data()
-    pd.song_artist_data()
-    pd.search_queries()
-    pd.set_path()
-    pd.search_queries()
-    pd.start_download()
-    pd.open_folder()
+    ss = scrape_spotify(page, link, path)
+    ss.spotify_auth()
+    ss.youtube_auth()
+    ss.link_type()
+    ss.song_artist_data()
+    ss.search_queries()
+    ss.set_path()
+    ss.search_queries()
+    ss.start_download()
+    ss.open_folder()

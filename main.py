@@ -8,7 +8,7 @@ def main(page: Page):
         page.update()
 
     def send_info(_):
-        link, path = playlist_link.value, folder_path.value
+        link, path = user_link.value, folder_path.value
         script.__start(
             page,
             link,
@@ -21,8 +21,8 @@ def main(page: Page):
         color="#D3D5FD",
         weight="w800",
     )
-    playlist_link = TextField(
-        hint_text="Playlist Link",
+    user_link = TextField(
+        hint_text="Link",
         autofocus=True,
         color="#D3D5FD",
         bgcolor="#474A56",
@@ -72,7 +72,7 @@ def main(page: Page):
             Divider(height=5, color="transparent"),
             Column(
                 controls=[
-                    playlist_link,
+                    user_link,
                     folder_path,
                 ],
             ),
