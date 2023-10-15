@@ -8,6 +8,7 @@ Bugs/Issues :
 """
 # Libraries
 import os
+from pprint import pprint
 import re
 import pytube
 import platform
@@ -25,30 +26,6 @@ from flet import *
 # from moviepy.editor import *
 class scrape_spotify:
     load_dotenv()
-    # Api Objects
-    __sp_obj = None
-    __yt_obj = None
-
-    # Link Data
-    entity_type = ""
-
-    # PLaylist Info
-    entity_data: dict = None
-    entity_name: str = ""
-    tracks: dict = None
-    spotify_items: dict = None
-    track_artist_list: list[(str, str)] = []
-
-    # Track Info
-    total_tracks: int = 0
-    total_found_tracks: int = 0
-    total_not_found_tracks: int = 0
-    total_failed_tracks: int = 0
-    total_downloaded_tracks: int = 0
-
-    # Others
-    download_path: str = ""
-    query_list: list[str] = None
     output_logs = Column(controls=[])
 
     def __init__(self, page, url: str, path: str = ""):
@@ -56,6 +33,7 @@ class scrape_spotify:
         self.url = url
         if path != "":
             self.download_path = path
+        self.track_artist_list: list[(str, str)] = []
 
     # Connecting with spotify api
     @classmethod
@@ -86,16 +64,33 @@ class scrape_spotify:
         self.entity_data = scrape_spotify.__sp_obj.playlist(self.url)
         self.tracks = self.entity_data["tracks"]
 
+    # Album Data
     def __extract_album_data(self):
         self.entity_data = scrape_spotify.__sp_obj.album(self.url)
         self.tracks = scrape_spotify.__sp_obj.album_tracks(self.url)
 
+    # Track Data
+    def __extract_track_data(self):
+        self.spotify_items = (
+            self.entity_data
+        ) = self.tracks = scrape_spotify.__sp_obj.track(self.url)
+        self.entity_name = self.entity_data["name"]
+        self.output_logs.controls.append(
+            Text(
+                value=f"Fetching info from favorite {self.entity_type}:{self.entity_name}"
+            )
+        )
+        self.total_tracks = 1
+
+    # Tracks data in respective entity
     def extract_data(self):
         if self.entity_type == "playlist":
             self.__extract_playlist_data()
         elif self.entity_type == "album":
             self.__extract_album_data()
-
+        elif self.entity_type == "track":
+            self.__extract_track_data()
+            return
         self.entity_name = self.entity_data["name"]
         self.spotify_items = self.tracks["items"]
         self.output_logs.controls.append(
@@ -104,20 +99,17 @@ class scrape_spotify:
             )
         )
         self.total_tracks = self.entity_data["tracks"]["total"]
-        # pprint(type(self.tracks))
 
-    def extract_track_data(self):
-        pass
-
-    def __album_song_artist_data(self):
-        for i in range(self.total_tracks):
-            temp_track_name = self.spotify_items[i]["name"]
-            temp_artist = ", ".join(
-                temp_name["name"] for temp_name in self.spotify_items[i]["artists"]
-            )
+    # Make list of Track Name and Artist from Track/Album
+    def __track_album_song_artist_data(self):
+        if self.entity_type == "track":
+            self.spotify_items = [self.spotify_items]
+        for track in self.spotify_items:
+            temp_track_name = track["name"]
+            temp_artist = ", ".join(temp_name["name"] for temp_name in track["artists"])
             self.track_artist_list.append([temp_track_name, temp_artist])
 
-    # Make list of Track and Artist
+    # Make list of Track and Artist from Playlist
     def __playlist_song_artist_data(self):
         offset = 0
         for i in range(self.total_tracks):
@@ -132,9 +124,10 @@ class scrape_spotify:
                 self.spotify_items = self.tracks["items"]
                 offset = i + 1
 
+    # Make list of Track and Artist
     def song_artist_data(self):
-        if self.entity_type == "album":
-            self.__album_song_artist_data()
+        if self.entity_type in {"album", "track"}:
+            self.__track_album_song_artist_data()
         elif self.entity_type == "playlist":
             self.__playlist_song_artist_data()
 
@@ -160,7 +153,6 @@ class scrape_spotify:
     # Set download path
     def set_path(self):
         current_os = platform.system()
-        print(current_os)
         if current_os == "Windows":
             self.download_path += (
                 os.path.join(Path.home(), "Downloads") + "\\" + self.entity_name
