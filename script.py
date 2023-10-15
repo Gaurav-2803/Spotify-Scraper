@@ -1,14 +1,19 @@
 """ 
-Bugs/Issues : 
-    Logic: 
-        1. Downloading more than once not updating logs and downloading them x times 
+Bugs/Issues: 
     UI: 
         1. Logs showing after completing whole process
+Todo:
+    UI:
+        1. Add Dialog Boxes
+        2. New Logs 
+    Backend:
+        1. Add Meta Data in file such as Cover art, lyrics, artist, etc
+        2. Download files from directly browser
+        3. Exception handling for user_urls 
 
 """
 # Libraries
 import os
-from pprint import pprint
 import re
 import pytube
 import platform
@@ -25,15 +30,15 @@ from flet import *
 # import eyed3
 # from moviepy.editor import *
 class scrape_spotify:
+    # Load Secrets
     load_dotenv()
+
     output_logs = Column(controls=[])
 
     def __init__(self, page, url: str, path: str = ""):
         self.page = page
         self.url = url
-        if path != "":
-            self.download_path = path
-        self.track_artist_list: list[(str, str)] = []
+        self.download_path = path if path != "" else ""
 
     # Connecting with spotify api
     @classmethod
@@ -105,9 +110,12 @@ class scrape_spotify:
         if self.entity_type == "track":
             self.spotify_items = [self.spotify_items]
         for track in self.spotify_items:
-            temp_track_name = track["name"]
-            temp_artist = ", ".join(temp_name["name"] for temp_name in track["artists"])
-            self.track_artist_list.append([temp_track_name, temp_artist])
+            self.track_artist_list.append(
+                [
+                    track["name"],
+                    ", ".join(artist_name["name"] for artist_name in track["artists"]),
+                ]
+            )
 
     # Make list of Track and Artist from Playlist
     def __playlist_song_artist_data(self):
@@ -116,7 +124,12 @@ class scrape_spotify:
             self.track_artist_list.append(
                 [
                     self.spotify_items[i - offset]["track"]["name"],
-                    self.spotify_items[i - offset]["track"]["artists"][0]["name"],
+                    ", ".join(
+                        artist_name["name"]
+                        for artist_name in self.spotify_items[i - offset]["track"][
+                            "artists"
+                        ]
+                    ),
                 ]
             )
             if (i + 1) % 100 == 0:
@@ -126,6 +139,7 @@ class scrape_spotify:
 
     # Make list of Track and Artist
     def song_artist_data(self):
+        self.track_artist_list = []
         if self.entity_type in {"album", "track"}:
             self.__track_album_song_artist_data()
         elif self.entity_type == "playlist":
@@ -213,6 +227,8 @@ class scrape_spotify:
         self.output_logs.controls.append(
             Text(f"Downloading your favorites songs at: {self.download_path}")
         )
+        self.total_downloaded_tracks = 0
+        self.total_failed_tracks = 0
         for track_no, query in enumerate(self.query_list):
             try:
                 # Fetch link
